@@ -12,6 +12,7 @@ from pathlib import Path
 
 from office.soffice import get_soffice_env
 
+from formula_compat import add_xlfn_prefixes
 from openpyxl import load_workbook
 
 MACRO_DIR_MACOS = "~/Library/Application Support/LibreOffice/4/user/basic/Standard"
@@ -75,6 +76,17 @@ def recalc(filename, timeout=30):
 
     if not setup_libreoffice_macro():
         return {"error": "Failed to setup LibreOffice macro"}
+
+    # Fix _xlfn. prefixes for OOXML future functions (MAXIFS, XLOOKUP, etc.)
+    # so LibreOffice doesn't show #NAME? errors
+    try:
+        wb = load_workbook(abs_path, data_only=False)
+        fixed = add_xlfn_prefixes(wb)
+        if fixed > 0:
+            wb.save(abs_path)
+        wb.close()
+    except Exception:
+        pass  # Non-fatal: proceed with recalc even if prefix fix fails
 
     cmd = [
         "soffice",

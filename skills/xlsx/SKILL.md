@@ -146,7 +146,7 @@ This applies to ALL calculations - totals, percentages, ratios, differences, etc
      - `#REF!`: Invalid cell references
      - `#DIV/0!`: Division by zero
      - `#VALUE!`: Wrong data type in formula
-     - `#NAME?`: Unrecognized formula name
+     - `#NAME?`: Unrecognized formula name (recalc.py auto-fixes missing `_xlfn.` prefixes for future functions like MAXIFS, XLOOKUP)
 
 ### Creating new Excel files
 
@@ -218,6 +218,7 @@ python scripts/recalc.py output.xlsx 30
 ```
 
 The script:
+- Fixes `_xlfn.` prefixes for OOXML future functions (MAXIFS, XLOOKUP, IFS, etc.) so LibreOffice doesn't show `#NAME?` errors
 - Automatically sets up LibreOffice macro on first run
 - Recalculates all formulas in all sheets
 - Scans ALL cells for Excel errors (#REF!, #DIV/0!, etc.)
