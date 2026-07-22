@@ -2,8 +2,17 @@
 OOXML future function compatibility.
 
 openpyxl doesn't add the _xlfn. prefix required by OOXML for "future
-functions" (MAXIFS, XLOOKUP, etc.). Without it, LibreOffice shows #NAME?
+functions" (MAXIFS, IFS, etc.). Without it, LibreOffice shows #NAME?
 errors. Excel and Google Sheets silently add the prefix on open.
+
+Dynamic-array / spilling functions (XLOOKUP, XMATCH, SORT, FILTER,
+UNIQUE, SEQUENCE, SORTBY, RANDARRAY) are deliberately excluded: an
+openpyxl-written file has no spill-range metadata, so LibreOffice either
+errors unpredictably (#NAME?/#VALUE!, function-dependent) or — worse —
+silently writes only the top-left cell of the result and reports zero
+errors. Auto-adding the prefix for these would trade an honest #NAME?
+for a silently wrong workbook. See skills/xlsx/SKILL.md, "Choosing
+formulas that survive verification".
 """
 
 import re
@@ -11,13 +20,9 @@ import re
 # Sorted longest-first so regex matches greedily (FORECAST.ETS.CONFINT before FORECAST.ETS).
 FUTURE_FUNCTIONS = sorted(
     [
-        # Excel 2019 / Office 365
+        # Excel 2019 / Office 365 (scalar — safe to prefix)
         "CONCAT", "IFS", "MAXIFS", "MINIFS", "SWITCH", "TEXTJOIN",
-        # Lookup (365)
-        "XLOOKUP", "XMATCH",
-        # Dynamic arrays (365)
-        "FILTER", "RANDARRAY", "SEQUENCE", "SORT", "SORTBY", "UNIQUE",
-        # Advanced (365)
+        # Advanced (365) — scalar, don't spill
         "LET", "LAMBDA",
         # Forecast (2016+)
         "FORECAST.ETS", "FORECAST.ETS.CONFINT", "FORECAST.ETS.SEASONALITY",
@@ -55,6 +60,8 @@ def add_xlfn_prefixes(wb):
     """
     modified = 0
     for ws in wb.worksheets:
+        if not hasattr(ws, "iter_rows"):
+            continue
         for row in ws.iter_rows():
             for cell in row:
                 v = cell.value
