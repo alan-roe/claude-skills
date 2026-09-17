@@ -1,11 +1,9 @@
 ---
 name: claude-api
 description: |-
-  Reference for the Claude API / Anthropic SDK — model ids, pricing, params, streaming, tool use, MCP, agents, caching, token counting, model migration.
-  Read this skill before work on Claude or Anthropic APIs, SDKs, models, pricing, limits, prompts, or provider-specific behavior. Also read it when the user invokes `/claude-api`, including `prompt-audit`.
-  Read it before implementing an LLM application capability when no provider is selected. Examples include agents, MCP, tool use, RAG, generation, and model evaluation.
-  Routine edits to agent instructions, coding-agent workflows, lint rules, governance, or provider-neutral retrospectives do not use this skill. A filename such as `AGENTS.md` or `CLAUDE.md` is not a provider signal.
-  Another provider overrides these triggers. If the request names OpenAI, GPT, Gemini, Llama, Mistral, Cohere, or Ollama, use that provider's guidance. For a qualifying LLM task with no named provider, search the project with the built-in grep tool before you read the target file. Search for `openai`, `langchain_openai`, `google.generativeai`, `genai`, `mistralai`, `cohere`, and `ollama`.
+  Read before Claude or Anthropic API, SDK, model, pricing, limit, prompt, or provider-specific work; explicit `/claude-api` invocations, including `prompt-audit`; or implementing LLM capabilities with no selected provider (agents, MCP, tool use, RAG, generation, evaluation).
+  Excludes routine agent-instruction, coding-workflow, lint, governance, and provider-neutral retrospective edits. AGENTS.md and CLAUDE.md filenames are not provider signals.
+  A named alternative provider takes precedence: use its guidance. For qualifying LLM work with no named provider, first search the project with grep for `openai`, `langchain_openai`, `google.generativeai`, `genai`, `mistralai`, `cohere`, and `ollama`.
 license: Complete terms in LICENSE.txt
 ---
 
